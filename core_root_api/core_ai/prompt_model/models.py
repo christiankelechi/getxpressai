@@ -13,6 +13,10 @@ class PromptModel(models.Model):
     updated=models.DateTimeField(auto_now=True)
     new_chat=models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['chat_id', '-updated']),
+        ]
 
     def __str__(self):
         return f"{self.user} prompts to the text model"

@@ -1,16 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from core_root_api.core_ai.prompt_model.models import PromptModel  # adjust import to your app
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from django.core.paginator import Paginator
 from core_root_api.core_ai.prompt_model.models import PromptModel
-from itertools import groupby
-from operator import itemgetter
-from django.utils.timezone import now
-from django.db.models import Q
 
 class GetChatById(APIView):
     authentication_classes = []  # 🔓 No authentication
@@ -18,6 +10,14 @@ class GetChatById(APIView):
 
     def get(self, request):
         chat_id = request.query_params.get('chat_id')
+        
+        # Pagination parameters
+        try:
+            page = int(request.query_params.get('page', 1))
+            limit = int(request.query_params.get('limit', 50))
+        except ValueError:
+            return Response({"status": False, "error": "Invalid pagination parameters"}, status=400)
+
         if not chat_id:
             return Response({
                 "status": False,
@@ -25,7 +25,9 @@ class GetChatById(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            prompts_queryset = PromptModel.objects.filter(chat_id=chat_id).order_by('-updated')
+            prompts_queryset = PromptModel.objects.filter(
+                chat_id=chat_id
+            ).select_related('user').order_by('time_created')
 
             if not prompts_queryset.exists():
                 return Response({
@@ -33,34 +35,39 @@ class GetChatById(APIView):
                     "error": "No chat found with the given chat_id."
                 }, status=status.HTTP_404_NOT_FOUND)
 
-            # Build prompt data
-            prompts = [
+            paginator = Paginator(prompts_queryset, limit)
+            page_obj = paginator.get_page(page)
+
+            # Fetch the title efficiently
+            title_obj = PromptModel.objects.filter(chat_id=chat_id).order_by('time_created').values('title').first()
+            title = title_obj['title'] if title_obj and title_obj.get('title') else "Untitled Chat"
+
+            # Build prompt data for the CURRENT PAGE only
+            content = [
                 {
-                    "user_id": str(obj.user.public_id).replace('-', ''),
+                    "user_id": str(obj.user.public_id).replace('-', '') if obj.user else None,
                     "chat_id": obj.chat_id,
                     "prompt_in": obj.prompt_in,
                     "prompt_output": obj.prompt_output,
-                    "updated": obj.updated
+                    "updated": obj.updated,
+                    "time_created": obj.time_created
                 }
-                for obj in prompts_queryset
+                for obj in page_obj
             ]
-
-            # Group by chat_id (only one group expected)
-            grouped = {}
-            for cid, group in groupby(prompts, key=itemgetter('chat_id')):
-                items = list(group)
-                title_obj = prompts_queryset.order_by('time_created').first()
-                grouped[cid] = {
-                    "chat_id": cid,
-                    "title": title_obj.title if title_obj else "Untitled Chat",
-                    "content": items
-                }
-
-            chat_data = list(grouped.values())[0]  # Only one chat_id group
 
             return Response({
                 "status": True,
-                "data": chat_data,
+                "data": {
+                    "chat_id": chat_id,
+                    "title": title,
+                    "content": content,
+                    "pagination": {
+                        "current_page": page_obj.number,
+                        "total_pages": paginator.num_pages,
+                        "has_next": page_obj.has_next(),
+                        "total_messages": paginator.count
+                    }
+                },
                 "message": "Chat history retrieved successfully."
             }, status=status.HTTP_200_OK)
 

@@ -108,13 +108,11 @@ class PromptViewset(viewsets.ModelViewSet):
             page = self.paginate_queryset(base_queryset)
 
             if page is not None:
-                # Build prompt data
+                # Instead of fetching all items, just group by chat_id
+                # and return an empty content array to prevent crashes.
                 prompts = [
                     {
-                        "user_id": str(request.user.public_id).replace('-', ''),
                         "chat_id": obj.chat_id,
-                        "prompt_in": obj.prompt_in,
-                        "prompt_output": obj.prompt_output,
                         "updated": obj.updated
                     }
                     for obj in page
@@ -128,13 +126,14 @@ class PromptViewset(viewsets.ModelViewSet):
                     grouped[chat_id] = {
                         "chat_id": chat_id,
                         "title": title_obj.title if title_obj else "Untitled Chat",
-                        "content": items
+                        "content": [], # Empty content for scale, fetch details via GetChatById
+                        "updated": items[0]["updated"] # Use first item's updated time for sorting
                     }
 
                 # 🔽 Sort by the latest updated message
                 sorted_chats = sorted(
                     grouped.values(),
-                    key=lambda x: x["content"][0]["updated"],
+                    key=lambda x: x["updated"],
                     reverse=True
                 )
 
