@@ -1,0 +1,8 @@
+Building Ai Generative Model From Scratch
+
+1.Let it take a piece of book
+2.Then extract text from the book
+3.Learn from the book from beginning to the end especially a simple pdf book
+4.Then train the model to have full knowledge of the text and can reply easily
+5.Import the  model file and use it to predict later to answer any question regarding the context
+

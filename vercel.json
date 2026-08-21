@@ -1,0 +1,22 @@
+{
+    "builds": [
+      {
+        "src": "xpressai/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "xpressai/wsgi.py",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE",
+          "OPTIONS"
+      ]
+      }
+    ]
+}

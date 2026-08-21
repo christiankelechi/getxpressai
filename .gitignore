@@ -1,0 +1,16 @@
+https://github.com/Ddilibe/Job-Connect.git
+scripts
+.env
+venv
+__pycache__/
+*.pyc
+*.pyo
+*.sqlite3
+AI-text-to-video-model-from-scratch
+Transformers-for-NLP-and-Computer-Vision-3rd-Edition
+nohup.out
+pifuhd
+Transformer for NLP and Computer Vision.pdf
+frontend
+venv
+xpress_ai.docx

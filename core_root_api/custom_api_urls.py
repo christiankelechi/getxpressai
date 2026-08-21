@@ -1,0 +1,2 @@
+email_smtp_api_url="https://zenia-email-api.vercel.app/api/v1/register_email"
+image_model_url="christiankeleze/xpressimagemodel"
