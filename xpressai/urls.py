@@ -25,7 +25,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from django.urls import path,re_path,include
-from xpressai.views import landing_page
+from xpressai.views import landing_page, keep_db_awake
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -49,6 +49,7 @@ urlpatterns = [
    
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('', landing_page, name='landing'),
+    path('api/keep-db-awake/', keep_db_awake, name='keep-db-awake'),
     path('',include(('core_root_api.security.user.routers','core_root_api.security.user'))),
     path('message/',include(('core_root_api.core_ai.prompt_model.routers','core_root_api.core_ai.prompt_model'))),
     path('auth/',include(('core_root_api.security.auth.routers','core_root_api.security.auth'))),

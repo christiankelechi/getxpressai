@@ -18,5 +18,11 @@
           "OPTIONS"
       ]
       }
+    ],
+    "crons": [
+      {
+        "path": "/api/keep-db-awake/",
+        "schedule": "*/10 * * * *"
+      }
     ]
 }

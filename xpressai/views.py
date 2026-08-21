@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.db import connection
 
 def landing_page(request):
     html_content = """
@@ -104,3 +105,16 @@ def landing_page(request):
     </html>
     """
     return HttpResponse(html_content)
+
+def keep_db_awake(request):
+    """
+    A lightweight endpoint to ping the database and keep it awake.
+    Designed to be hit by Vercel Cron Jobs.
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            row = cursor.fetchone()
+        return JsonResponse({"status": "success", "message": "Database is awake", "result": row})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
