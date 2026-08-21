@@ -116,6 +116,15 @@ WSGI_APPLICATION = "xpressai.wsgi.application"
 #     },
 # }
 
+# Go to the Google Cloud Console.
+# Navigate to APIs & Services > Credentials.
+# If you haven't already, click Create Credentials > OAuth client ID (Application type: Web application).
+# Under Authorized JavaScript origins, add http://localhost:5174 (or whatever your Vite dev server port is) and your production URL.
+# Copy the Client ID that Google generates for you.
+# Open the newly created c:\kc_new_ssd\2025-projects\xpressai\frontend\xpress-ai-app\.env file and replace your_google_client_id_here with your actual Google Client ID.
+# Restart your Vite dev server so it picks up the new environment variables.
+# Once you put your real Client ID in the .env file and restart the server, the Google login pop-up will work perfectly!
+
 AUTH_USER_MODEL="core_root_api_security_user.User"
 
 # Database
