@@ -4,7 +4,7 @@ import request
 from django.shortcuts import render
 from django.http import JsonResponse
 import base64
-import numpy as np
+import base64
 from PIL import Image
 from io import BytesIO
 
@@ -127,6 +127,7 @@ def face_login(request):
             image_data = data['image']
             format, imgstr = image_data.split(';base64,')
             image = Image.open(BytesIO(base64.b64decode(imgstr)))
+            import numpy as np
             image = np.array(image)
 
             face_encodings = face_recognition.face_encodings(image)

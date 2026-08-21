@@ -22,13 +22,13 @@ openai
 gradio-client
 gunicorn
 fastapi
-spacy
-scikit-image
-matplotlib
-Pillow
-imageio
-torchvision
-moviepy
+# spacy
+# scikit-image
+# matplotlib
+# Pillow
+# imageio
+# torchvision
+# moviepy
 # sudo supervisorctl reread
 # sudo supervisorctl update
 # sudo supervisorctl restart xpressaiapi
@@ -76,8 +76,8 @@ azure-storage-blob>=12.15.0
 # redis>=4.5.0  
 
 # Additional Utilities
-numpy>=1.24.0  
-pandas>=1.5.0  
+# numpy>=1.24.0  
+# pandas>=1.5.0  
 Pillow>=9.4.0  
 
 # API and Integration
